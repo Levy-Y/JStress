@@ -1,0 +1,9 @@
+Package: jstress
+Version: 1.0
+Architecture: all
+Maintainer: Levy-Y
+Installed-Size: 2
+Section: utils
+Priority: optional
+Description: A Java-based network stress test toolkit
+ A CLI tool to perform HTTP, DNS, and other stress tests.

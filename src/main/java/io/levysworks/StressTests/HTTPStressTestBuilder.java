@@ -35,9 +35,11 @@ public class HTTPStressTestBuilder {
 
         private int successful_requests;
         private int failed_requests;
+        private Map<Integer, Integer> statuses;
 
         @Override
         public void run() {
+            statuses = new HashMap<>();
             long interval = 1000 / frequency;
             startTime = System.currentTimeMillis();
 
@@ -55,6 +57,10 @@ public class HTTPStressTestBuilder {
                         System.err.printf("Expected HTTP status code %d, got %d\n", expected_status, response.statusCode());
                     }
                     successful_requests++;
+
+                    if (statuses.containsKey(response.statusCode())) {
+                        statuses.get(response.statusCode());
+                    }
 
                 } catch (IOException | InterruptedException e) {
                     if ((e.getCause() instanceof IOException) && verbose) {

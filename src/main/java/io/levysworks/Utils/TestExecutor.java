@@ -39,11 +39,6 @@ public class TestExecutor {
             }
         });
 
-        HTTPTestReportManager.HTTPTestReport report = HTTPTestReportManager.getReport();
-        System.out.printf("Target: http://%s:%s\n", report.getTarget(), report.getPort());
-        System.out.printf("Duration: %ss  | Threads: %s  | Frequency: %s req/sec\n", report.getDuration(), report.getThreads(), report.getFrequency());
-        System.out.printf("Requests sent: %d\n", report.getRequests());
-        System.out.printf("Successful:    %d\n", report.getSuccessfulRequests());
-        System.out.printf("Failed:        %d\n", report.getFailedRequests());
+        HTTPTestReportManager.print();
     }
 }

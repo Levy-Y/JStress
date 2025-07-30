@@ -14,8 +14,12 @@ public class HTTPTestReportManager {
         report.failed_requests += failed_request;
     }
 
-    public static HTTPTestReport getReport() {
-        return report;
+    public static void print() {
+        System.out.printf("Target: http://%s:%s\n", report.target, report.port);
+        System.out.printf("Duration: %ss  | Threads: %s  | Frequency: %s req/sec\n", report.duration, report.threads, report.frequency);
+        System.out.printf("Requests sent: %d\n", report.requests);
+        System.out.printf("Successful:    %d\n", report.successful_requests);
+        System.out.printf("Failed:        %d\n", report.failed_requests);
     }
 
     public static class HTTPTestReport {
@@ -37,38 +41,6 @@ public class HTTPTestReportManager {
             this.requests = requests;
             this.successful_requests = successful_requests;
             this.failed_requests = failed_requests;
-        }
-
-        public String getTarget() {
-            return target;
-        }
-
-        public int getPort() {
-            return port;
-        }
-
-        public int getThreads() {
-            return threads;
-        }
-
-        public int getDuration() {
-            return duration;
-        }
-
-        public int getFrequency() {
-            return frequency;
-        }
-
-        public int getRequests() {
-            return requests;
-        }
-
-        public int getSuccessfulRequests() {
-            return successful_requests;
-        }
-
-        public int getFailedRequests() {
-            return failed_requests;
         }
     }
 }
