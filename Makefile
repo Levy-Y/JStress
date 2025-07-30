@@ -1,4 +1,4 @@
-.PHONY: clean package deb
+.PHONY: clean package deb cd
 
 clean:
 	@./mvnw clean
