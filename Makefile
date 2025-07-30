@@ -1,13 +1,16 @@
-.PHONY: build clean mvn package dpkg-deb
+.PHONY: clean package deb
 
 clean:
 	@./mvnw clean
+	rm -rf debian/.debhelper
+	rm -rf debian/jstress
+	rm -f debian/debhelper-build-stamp
+	rm -f debian/files
+	rm -f debian/jstress.substvars
+	rm -f debian/jstress.debhelper.log
 
-build: clean
+package: clean
 	@./mvnw package
 
-package: build
-	@echo NOTE: This build target can only be run on Debian based systems
-	cp target/jst package/usr/local/bin/
-	dpkg-deb --root-owner-group --build package ./target/jstress.deb
-	rm -f package/usr/local/bin/jst
+deb: clean
+	dpkg-buildpackage -us -uc

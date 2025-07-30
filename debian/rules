@@ -1,0 +1,13 @@
+#!/usr/bin/make -f
+
+override_dh_auto_build:
+	./mvnw package -Dmaven.repo.local=./target/.m2
+
+override_dh_auto_clean:
+	./mvnw clean -Dmaven.repo.local=./target/.m2
+
+override_dh_builddeb:
+	dh_builddeb --destdir=./target
+
+%:
+	dh $@
