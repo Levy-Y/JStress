@@ -1,14 +1,14 @@
 package io.levysworks.Subcommands;
 
-import io.levysworks.Enums.HTTPRequestTypes;
-import io.levysworks.Interfaces.BaseTest;
-import io.levysworks.StressTests.HTTPStressTestBuilder;
+import io.levysworks.Http.Enums.HTTPRequestMethods;
+import io.levysworks.Http.HttpRequestFactory;
+import io.levysworks.Http.HttpStressTestConfiguration;
+import io.levysworks.Http.HttpStressTestExecutor;
 import io.levysworks.Utils.AddressValidator;
-import io.levysworks.Utils.TestExecutor;
 import picocli.CommandLine;
 
 import java.io.File;
-import java.io.IOException;
+import java.net.http.HttpRequest;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
@@ -21,7 +21,7 @@ public class HttpTestCommand implements Callable<Integer> {
     private Integer port;
 
     @CommandLine.Option(names = {"-m", "--method"}, description = "The HTTP request method to use in the test", defaultValue = "GET")
-    private HTTPRequestTypes method;
+    private HTTPRequestMethods method;
 
     @CommandLine.Option(names = "--header", description = "Header to use in the stress tests (Pass --header for each header key-value pair)")
     private Map<String, String> headers;
@@ -48,7 +48,7 @@ public class HttpTestCommand implements Callable<Integer> {
     boolean[] verbose;
 
     @Override
-    public Integer call() throws IOException {
+    public Integer call() {
         if (!AddressValidator.isAddressValid(host)) {
             System.err.println("Invalid host address: " + host);
             return 1;
@@ -63,25 +63,17 @@ public class HttpTestCommand implements Callable<Integer> {
             System.out.println("Both --body-size and --body-file were provided, ignoring body size..");
         }
 
-        if (!(method.equals(HTTPRequestTypes.POST) || method.equals(HTTPRequestTypes.PUT)) && (bodySize != null || bodyFile != null) && verbose != null) {
+        if (!(method.equals(HTTPRequestMethods.POST) || method.equals(HTTPRequestMethods.PUT)) && (bodySize != null || bodyFile != null) && verbose != null) {
             System.out.println("Selected request method cannot have a file body, aborting..");
             return 1;
         }
 
-        BaseTest test = new HTTPStressTestBuilder()
-                        .host(host)
-                        .port(port)
-                        .method(method)
-                        .headers(headers)
-                        .bodyFile(bodyFile)
-                        .bodySize(bodySize)
-                        .expected_status(expectStatus)
-                        .frequency(frequency)
-                        .duration(duration)
-                        .verbose(verbose != null && verbose[0])
-                        .build();
+        HttpStressTestConfiguration configuration = new HttpStressTestConfiguration(host, port, method, headers, bodyFile, bodySize, expectStatus, frequency, duration, parallel, verbose != null);
+        HttpRequest request = new HttpRequestFactory(configuration).createHttpRequest();
 
-        TestExecutor.stressTest(test, host, port, parallel, duration, frequency, (verbose != null && verbose.length > 0));
+        HttpStressTestExecutor test = new HttpStressTestExecutor(configuration, request);
+        test.execute();
+
         return 0;
     }
 }
