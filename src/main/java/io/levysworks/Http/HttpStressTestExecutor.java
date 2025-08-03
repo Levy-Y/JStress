@@ -67,7 +67,7 @@ public class HttpStressTestExecutor {
         startTime = System.currentTimeMillis();
 
         for (int i = 0; i < configuration.getThreadCount(); i++) {
-            String id = "TesterThread_" + i;
+            String id = "HttpThread_" + i;
 
             Thread t = new Thread(TesterThread);
             t.setName(id);
